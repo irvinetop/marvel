@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import "../interfaces";
+import { Character } from "../interfaces/index";
 
 interface UseMarvelDataState {
   data: Character[];
@@ -23,37 +23,39 @@ export const useMarvelData = (): UseMarvelDataState => {
   const saveFavorites = (favorites: number[]) => {
     localStorage.setItem("marvel_favorites", JSON.stringify(favorites));
   };
+  const fetchData = async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const url = `http://gateway.marvel.com/v1/public/characters?apikey=${
+        import.meta.env.VITE_MARVEL_API_KEY
+      }`;
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const data = await response.json();
+      const favoritesIds = loadFavorites();
+
+      const characters = data.data.results.map((character: any) => ({
+        id: character.id,
+        name: character.name,
+        imageUrl: `${character.thumbnail.path}.${character.thumbnail.extension}`,
+        isFavorite: favoritesIds.includes(character.id),
+      }));
+
+      setData(characters);
+    } catch (error) {
+      console.log(error);
+      setError("Failed to fetch data");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchData = async () => {
-      setIsLoading(true);
-      setError(null);
-
-      try {
-        const url = `http://gateway.marvel.com/v1/public/characters?apikey=${process.env.MARVEL_API_KEY}`;
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-
-        const data = await response.json();
-        const favoritesIds = loadFavorites();
-
-        const characters = data.data.results.map((character: any) => ({
-          id: character.id,
-          name: character.name,
-          imageUrl: `${character.thumbnail.path}.${character.thumbnail.extension}`,
-          isFavorite: favoritesIds.includes(character.id),
-        }));
-
-        setData(characters);
-      } catch (error) {
-        setError("Failed to fetch data");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
     fetchData();
   }, []);
 
