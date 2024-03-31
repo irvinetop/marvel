@@ -16,13 +16,12 @@ export const useMarvelData = (): UseMarvelDataState => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [onlyFavorites, setOnlyFavorites] = useState<boolean>(false);
-  // Función para cargar los favoritos desde localStorage
+
   const loadFavorites = (): number[] => {
     const favorites = localStorage.getItem("marvel_favorites");
     return favorites ? JSON.parse(favorites) : [];
   };
 
-  // Función para guardar los favoritos en localStorage
   const saveFavorites = (favorites: number[]) => {
     localStorage.setItem("marvel_favorites", JSON.stringify(favorites));
   };
@@ -48,6 +47,7 @@ export const useMarvelData = (): UseMarvelDataState => {
         name: character.name,
         imageUrl: `${character.thumbnail.path}.${character.thumbnail.extension}`,
         isFavorite: favoritesIds.includes(character.id),
+        description: character.description,
       }));
 
       setData(characters);
@@ -63,7 +63,6 @@ export const useMarvelData = (): UseMarvelDataState => {
     fetchData();
   }, []);
 
-  // Función para alternar el estado de favorito de un personaje
   const toggleFavorite = (id: number) => {
     const updatedData = data.map((character) =>
       character.id === id
@@ -79,7 +78,6 @@ export const useMarvelData = (): UseMarvelDataState => {
     );
   };
 
-  // Calcula el total de favoritos usando useMemo
   const totalFavorites = useMemo(() => {
     return data.filter((character) => character.isFavorite).length;
   }, [data]);
