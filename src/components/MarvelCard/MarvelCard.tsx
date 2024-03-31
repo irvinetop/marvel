@@ -1,18 +1,20 @@
-import React from "react";
+import React, { MouseEventHandler } from "react";
 import styled from "styled-components";
 import FavoriteIcon from "../HeartIcon/HeartIcon"; // Asegúrate de ajustar la ruta de importación según sea necesario
 import { Character } from "../../interfaces";
 interface MarvelCardProps {
   character?: Character;
-  onToggleFavorite: () => void;
+  onToggleFavorite: MouseEventHandler<HTMLImageElement>;
+  goToDetails: MouseEventHandler<HTMLImageElement>;
 }
 
 const MarvelCard: React.FC<MarvelCardProps> = ({
   character,
   onToggleFavorite,
+  goToDetails,
 }) => {
   return (
-    <CardContainer className="card">
+    <CardContainer className="card" onClick={goToDetails}>
       <Image src={character?.imageUrl} alt={character?.name} />
       <CardContent className="card-content">
         <Name>{character?.name}</Name>
@@ -30,6 +32,7 @@ const CardContainer = styled.div`
   margin: 10px;
   display: flex;
   flex-direction: column;
+  cursor: pointer;
 `;
 
 const Image = styled.img`
@@ -43,13 +46,7 @@ const CardContent = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  clip-path: polygon(
-    0 0,
-    100% 0,
-    100% 80%,
-    90% 100%,
-    0 100%
-  ); /* Ajusta estos valores según necesites */
+  clip-path: polygon(0 0, 100% 0, 100% 80%, 90% 100%, 0 100%);
   height: 56px;
 `;
 
