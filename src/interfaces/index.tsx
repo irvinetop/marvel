@@ -3,4 +3,12 @@ export interface Character {
   name: string;
   imageUrl: string;
   isFavorite: boolean;
+  comic?: Comic[];
+  description?: string;
+}
+
+interface Comic {
+  title: string;
+  year: number;
+  imageUrl: string;
 }

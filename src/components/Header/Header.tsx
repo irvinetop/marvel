@@ -3,7 +3,6 @@ import styled from "styled-components";
 // Importa el logo de Marvel y el ícono de corazón si los tienes disponibles como archivos
 // Por ejemplo: import { ReactComponent as MarvelLogo } from './path-to-marvel-logo.svg';
 import HeartIcon from "../HeartIcon/HeartIcon";
-
 const logoPath =
   process.env.NODE_ENV === "production"
     ? "/images/MarvelLogo.svg" // Ruta al SVG minificado para producción
@@ -12,13 +11,19 @@ const logoPath =
 // Define las props esperadas por el componente Header
 interface HeaderProps {
   favoritesCount: number;
+  favoritesOnClick: () => void;
+  logoOnClick: () => void;
 }
 
-const Header: React.FC<HeaderProps> = ({ favoritesCount }) => {
+const Header: React.FC<HeaderProps> = ({
+  favoritesCount,
+  favoritesOnClick = () => {},
+  logoOnClick = () => {},
+}) => {
   return (
     <HeaderContainer>
-      <Logo src={logoPath} alt="Marvel Logo" />
-      <FavoritesContainer>
+      <Logo src={logoPath} alt="Marvel Logo" onClick={logoOnClick} />
+      <FavoritesContainer onClick={favoritesOnClick}>
         <HeartIcon />
         <FavoritesText>{favoritesCount}</FavoritesText>
       </FavoritesContainer>
@@ -40,6 +45,7 @@ const Logo = styled.img`
   height: 52px;
   gap: 0px;
   opacity: 0px;
+  cursor: pointer;
 `;
 
 const FavoritesContainer = styled.div`

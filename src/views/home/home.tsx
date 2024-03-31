@@ -1,27 +1,59 @@
-import React, { useMemo } from "react";
+import React, { useEffect, useMemo } from "react";
+import styled from "styled-components";
+import { useNavigate, useLocation } from "react-router";
+
 import Header from "../../components/Header/Header";
 import SearchBar from "../../components/SearchBar/SearchBar";
-import styled from "styled-components";
-import { useSearchBar } from "../../hooks/useSearchBar"; // Asegúrate de ajustar la ruta de importación
-import { useMarvelData } from "../../hooks/useMarvelData"; // Asegúrate de ajustar la ruta de importación
 import MarvelCard from "../../components/MarvelCard/MarvelCard";
-import { Character } from "../../interfaces";
-const Home: React.FC = () => {
-  const { searchValue, handleChange } = useSearchBar();
-  const { data, isLoading, error, totalFavorites, toggleFavorite } =
-    useMarvelData();
 
-  const searchResultsCount = 10;
+import { useSearchBar } from "../../hooks/useSearchBar";
+import { useMarvelData } from "../../hooks/useMarvelData";
+
+import { Character } from "../../interfaces";
+
+const Home: React.FC = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { searchValue, handleChange } = useSearchBar();
+  const {
+    data,
+    isLoading,
+    error,
+    totalFavorites,
+    toggleFavorite,
+    onlyFavorites,
+    setOnlyFavorites,
+  } = useMarvelData();
+
+  useEffect(() => {
+    console.log(location);
+    if (location?.state?.onlyFavorites != undefined)
+      setOnlyFavorites(location?.state?.onlyFavorites);
+  }, [location]);
+
   const filteredData = useMemo(() => {
     return data.filter((item: Character) =>
-      item.name.toLowerCase().includes(searchValue.toLowerCase())
+      onlyFavorites == true
+        ? item.name.toLowerCase().includes(searchValue.toLowerCase()) &&
+          item.isFavorite == true
+        : item.name.toLowerCase().includes(searchValue.toLowerCase())
     );
-  }, [data, searchValue]);
+  }, [data, searchValue, onlyFavorites]);
+
   if (isLoading) return <p>Cargando...</p>;
   if (error) return <p>Hubo un error al obtener los datos: {error}</p>;
   return (
     <FullHeightContainer>
-      <Header favoritesCount={totalFavorites} />
+      <Header
+        favoritesCount={totalFavorites}
+        logoOnClick={() => {
+          navigate("/", { state: { onlyFavorites: false } });
+        }}
+        favoritesOnClick={() => {
+          navigate("/", { state: { onlyFavorites: true } });
+        }}
+      />
+      {onlyFavorites == true && <FavoritesTitle>FAVORITES</FavoritesTitle>}
       <SearchBar
         placeHolder="SEARCH A CHARACTER"
         value={searchValue}
@@ -46,8 +78,17 @@ const FullHeightContainer = styled.div`
   flex-direction: column;
 `;
 
+const FavoritesTitle = styled.h1`
+  font-family: Roboto Condensed;
+  font-size: 32px;
+  font-weight: 700;
+  line-height: 37.5px;
+  text-align: left;
+  font-weight: bold;
+  margin: 30px 30px 0px;
+`;
+
 const SearchResultsCount = styled.div`
-  width: 100%;
   margin: 20px 30px 20px;
   font-family: Roboto Condensed;
   font-size: 12px;
