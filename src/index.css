@@ -66,3 +66,32 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* Estilos Tarjeta Marvel */
+
+@keyframes changeBackground {
+  from {
+    background-color: 100% 0%;
+  }
+  to {
+    background-color: 100% 100%;
+  }
+}
+
+.card-content {
+  background: linear-gradient(#000 50%, #000, #ec1d24, #ec1d24 50%);
+  background-size: 100% 200%;
+  transition: 0.3s ease-in;
+}
+
+.card:hover .card-content {
+  background-position: 0% -100%;
+}
+
+.card-content > img {
+  transition: filter 0.3s ease; /* Duración de 3 segundos para el cambio de filtro */
+}
+
+.card:hover .card-content > img {
+  filter: brightness(0) invert(1);
+}

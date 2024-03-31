@@ -4,12 +4,12 @@ import SearchIcon from "../SearchIcon/SearchIcon"; // Asegúrate de ajustar la r
 
 interface HeaderProps {
   value: string;
-  placeHolder: string;
+  placeHolder?: string;
   onChange: ChangeEventHandler<HTMLInputElement>;
 }
 
 const SearchBar: React.FC<HeaderProps> = ({
-  placeHolder = "SEARCH A CHARACTER...",
+  placeHolder = "DEFAULT PLACEHOLDER...",
   value = "",
   onChange = () => {},
 }) => {
