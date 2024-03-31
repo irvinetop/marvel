@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 // Importa el logo de Marvel y el ícono de corazón si los tienes disponibles como archivos
 // Por ejemplo: import { ReactComponent as MarvelLogo } from './path-to-marvel-logo.svg';
-// import { ReactComponent as HeartIcon } from './path-to-heart-icon.svg';
+import HeartIcon from "../HeartIcon/HeartIcon";
 
 const HeaderContainer = styled.header`
   display: flex;
@@ -31,7 +31,7 @@ interface HeaderProps {
 const Header: React.FC<HeaderProps> = ({ favoritesCount }) => {
   return (
     <HeaderContainer>
-      <Logo src="path-to-marvel-logo.png" alt="Marvel Logo" />
+      <Logo src="/vite.svg" alt="Marvel Logo" />
       <FavoritesContainer>
         <HeartIcon />
         <span>{favoritesCount}</span>
