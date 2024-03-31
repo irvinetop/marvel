@@ -393,6 +393,13 @@
   "resolved" "https://registry.npmjs.org/@types/json-schema/-/json-schema-7.0.15.tgz"
   "version" "7.0.15"
 
+"@types/node@^18.0.0 || >=20.0.0", "@types/node@^20.12.2":
+  "integrity" "sha512-zQ0NYO87hyN6Xrclcqp7f8ZbXNbRfoGWNcMvHTPQp9UUrwI0mI7XBz+cu7/W6/VClYo2g63B0cjull/srU7LgQ=="
+  "resolved" "https://registry.npmjs.org/@types/node/-/node-20.12.2.tgz"
+  "version" "20.12.2"
+  dependencies:
+    "undici-types" "~5.26.4"
+
 "@types/prop-types@*":
   "integrity" "sha512-5zvhXYtRNRluoE/jAp4GVsSduVUzNWKkOZrCDBWYtE7biZywwdC2AcEzg+cSMLFRfVgeAFqpfNabiPjxFddV1Q=="
   "resolved" "https://registry.npmjs.org/@types/prop-types/-/prop-types-15.7.12.tgz"
@@ -1563,6 +1570,11 @@
   "integrity" "sha512-KrPd3PKaCLr78MalgiwJnA25Nm8HAmdwN3mYUYZgG/wizIo9EainNVQI9/yDavtVFRN2h3k8uf3GLHuhDMgEHg=="
   "resolved" "https://registry.npmjs.org/typescript/-/typescript-5.4.3.tgz"
   "version" "5.4.3"
+
+"undici-types@~5.26.4":
+  "integrity" "sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA=="
+  "resolved" "https://registry.npmjs.org/undici-types/-/undici-types-5.26.5.tgz"
+  "version" "5.26.5"
 
 "update-browserslist-db@^1.0.13":
   "integrity" "sha512-xebP81SNcPuNpPP3uzeW1NYXxI3rxyJzF3pD6sH4jE7o/IX+WtSpwnVU+qIsDPyk0d3hmFQ7mjqc6AtV604hbg=="
