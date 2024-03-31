@@ -7,8 +7,8 @@ export interface Character {
   description?: string;
 }
 
-interface Comic {
-  title: string;
+export interface Comic {
+  name: string;
   year: number;
   imageUrl: string;
 }
