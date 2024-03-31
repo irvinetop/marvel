@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Character } from "../interfaces/index";
 
 interface UseMarvelDataState {
   data: Character[];
   isLoading: boolean;
   error: string | null;
+  totalFavorites: number; // Añadido el total de favoritos
   toggleFavorite: (id: number) => void;
 }
 
@@ -23,6 +24,7 @@ export const useMarvelData = (): UseMarvelDataState => {
   const saveFavorites = (favorites: number[]) => {
     localStorage.setItem("marvel_favorites", JSON.stringify(favorites));
   };
+
   const fetchData = async () => {
     setIsLoading(true);
     setError(null);
@@ -75,5 +77,10 @@ export const useMarvelData = (): UseMarvelDataState => {
     );
   };
 
-  return { data, isLoading, error, toggleFavorite };
+  // Calcula el total de favoritos usando useMemo
+  const totalFavorites = useMemo(() => {
+    return data.filter((character) => character.isFavorite).length;
+  }, [data]);
+
+  return { data, isLoading, error, totalFavorites, toggleFavorite };
 };
