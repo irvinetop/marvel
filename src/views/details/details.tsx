@@ -1,46 +1,34 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import styled from "styled-components";
 import { useNavigate, useLocation } from "react-router";
 
 import Header from "../../components/Header/Header";
-import SearchBar from "../../components/SearchBar/SearchBar";
-import MarvelCard from "../../components/MarvelCard/MarvelCard";
+import DetailCard from "../../components/DetailCard/DetailCard";
 
-import { useSearchBar } from "../../hooks/useSearchBar";
-import { useMarvelData } from "../../hooks/useMarvelData";
+import { useMarvelCharacter } from "../../hooks/useMarvelCharacter";
 
-import { Character } from "../../interfaces";
-
+import ComicCard from "../../components/ComicCard/ComicCard";
+import { Comic } from "../../interfaces";
 const Details: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { searchValue, handleChange } = useSearchBar();
-  const {
-    data,
-    isLoading,
-    error,
-    totalFavorites,
-    toggleFavorite,
-    onlyFavorites,
-    setOnlyFavorites,
-  } = useMarvelData();
+  const { data, isLoading, totalFavorites, toggleFavorite } =
+    useMarvelCharacter({ character: location?.state?.character });
 
-  useEffect(() => {
-    if (location?.state?.onlyFavorites != undefined)
-      setOnlyFavorites(location?.state?.onlyFavorites);
-  }, [location]);
+  //   useEffect(() => {
+  //     if (location?.state?.onlyFavorites != undefined)
+  //       setOnlyFavorites(location?.state?.onlyFavorites);
+  //   }, [location]);
 
-  const filteredData = useMemo(() => {
-    return data.filter((item: Character) =>
-      onlyFavorites == true
-        ? item.name.toLowerCase().includes(searchValue.toLowerCase()) &&
-          item.isFavorite == true
-        : item.name.toLowerCase().includes(searchValue.toLowerCase())
-    );
-  }, [data, searchValue, onlyFavorites]);
+  //   const filteredData = useMemo(() => {
+  //     return data.filter((item: Character) =>
+  //       onlyFavorites == true
+  //         ? item.name.toLowerCase().includes(searchValue.toLowerCase()) &&
+  //           item.isFavorite == true
+  //         : item.name.toLowerCase().includes(searchValue.toLowerCase())
+  //     );
+  //   }, [data, searchValue, onlyFavorites]);
 
-  if (isLoading) return <p>Cargando...</p>;
-  if (error) return <p>Hubo un error al obtener los datos: {error}</p>;
   return (
     <FullHeightContainer>
       <Header
@@ -52,7 +40,11 @@ const Details: React.FC = () => {
           navigate("/", { state: { onlyFavorites: true } });
         }}
       />
-      {onlyFavorites == true && <FavoritesTitle>FAVORITES</FavoritesTitle>}
+      <DetailCard
+        character={data}
+        onToggleFavorite={() => toggleFavorite(data?.id)}
+      />
+      {/* {onlyFavorites == true && <FavoritesTitle>FAVORITES</FavoritesTitle>}
       <SearchBar
         placeHolder="SEARCH A CHARACTER"
         value={searchValue}
@@ -60,14 +52,14 @@ const Details: React.FC = () => {
       />
       <SearchResultsCount>{filteredData?.length} RESULTS</SearchResultsCount>
 
-      <CardsContainer>
-        {filteredData.map((item: Character) => (
-          <MarvelCard
-            character={item}
-            onToggleFavorite={() => toggleFavorite(item.id)}
-          />
-        ))}
-      </CardsContainer>
+     */}
+      <CenterContainer>
+        <CardsContainer>
+          {data?.comic?.map((item: Comic) => (
+            <ComicCard comic={item} />
+          ))}
+        </CardsContainer>
+      </CenterContainer>
     </FullHeightContainer>
   );
 };
@@ -76,33 +68,34 @@ const FullHeightContainer = styled.div`
   height: 100vh;
   flex-direction: column;
 `;
-
-const FavoritesTitle = styled.h1`
-  font-family: Roboto Condensed;
-  font-size: 32px;
-  font-weight: 700;
-  line-height: 37.5px;
-  text-align: left;
-  font-weight: bold;
-  margin: 30px 30px 0px;
-`;
-
-const SearchResultsCount = styled.div`
-  margin: 20px 30px 20px;
-  font-family: Roboto Condensed;
-  font-size: 12px;
-  font-weight: 400;
-  line-height: 14.06px;
-  text-align: left;
-  color: #000000;
-`;
-
-const CardsContainer = styled.div`
+const CenterContainer = styled.div`
   display: flex;
-  flex-wrap: wrap; // Esto permite que los items se pasen a la siguiente fila si no hay espacio
-  justify-content: center; // Centra los items horizontalmente
-  gap: 20px; // Espacio entre los items
-  padding: 20px; // Espaciado alrededor de todo el contenedor
+  justify-content: center;
+  align-items: center;
+`;
+const CardsContainer = styled.div`
+  padding: 20px;
+  width: 75%;
+  display: flex;
+  overflow: auto;
+
+  &::-webkit-scrollbar {
+    height: 5px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #ec1d24;
+    border-radius: 6px;
+  }
+
+  /* Cambia el color del "pulgar" al hacer hover */
+  &::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
 `;
 
 export default Details;

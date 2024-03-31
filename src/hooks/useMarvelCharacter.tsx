@@ -1,94 +1,107 @@
-import { useState, useLayoutEffect, useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Character } from "../interfaces/index";
 
 interface UseMarvelCharacter {
-  data: Character;
+  data: Character | null;
   isLoading: boolean;
   error: string | null;
   totalFavorites: number;
-  toggleFavorite: (id: number) => void;
-  onlyFavorites: boolean;
-  setOnlyFavorites: (visibility: boolean) => void;
+  toggleFavorite: (id: number | undefined) => void;
 }
 
 interface UserMarvelCharacterProps {
-  id: number;
-  name:
+  character: Character | null;
 }
 
-export const useMarvelData = ({
-  id,
+export const useMarvelCharacter = ({
+  character,
 }: UserMarvelCharacterProps): UseMarvelCharacter => {
   const [data, setData] = useState<Character | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-  // Función para cargar los favoritos desde localStorage
-  const loadFavorites = (): number[] => {
-    const favorites = localStorage.getItem("marvel_favorites");
-    return favorites ? JSON.parse(favorites) : [];
-  };
+  const [totalFavorites, setTotalFavorites] = useState(() => {
+    const existingFavoritesString = localStorage.getItem("marvel_favorites");
+    return existingFavoritesString
+      ? JSON.parse(existingFavoritesString).length
+      : 0;
+  });
 
-  // Función para guardar los favoritos en localStorage
-  const saveFavorites = (favorites: number[]) => {
-    localStorage.setItem("marvel_favorites", JSON.stringify(favorites));
+  const saveFavorites = (id: number) => {
+    // Carga los favoritos existentes desde localStorage
+    const existingFavoritesString = localStorage.getItem("marvel_favorites");
+    const existingFavorites = existingFavoritesString
+      ? JSON.parse(existingFavoritesString)
+      : [];
+
+    // Comprueba si el id ya está presente en los favoritos
+    const isAlreadyFavorite = existingFavorites.includes(id);
+
+    // Si ya es favorito, lo removemos; si no, lo agregamos
+    const updatedFavorites = isAlreadyFavorite
+      ? existingFavorites.filter((favoriteId: number) => favoriteId !== id)
+      : [...existingFavorites, id];
+
+    // Guarda los favoritos actualizados en localStorage
+    setTotalFavorites(updatedFavorites.length);
+    localStorage.setItem("marvel_favorites", JSON.stringify(updatedFavorites));
   };
 
   const fetchData = async () => {
-    setIsLoading(true);
-    setError(null);
+    if (character?.id) {
+      setIsLoading(true);
+      setError(null);
 
-    try {
-      const url = `http://gateway.marvel.com/v1/public/characters/${id}/comics?apikey=${
-        import.meta.env.VITE_MARVEL_API_KEY
-      }`;
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
+      try {
+        const url = `http://gateway.marvel.com/v1/public/characters/${
+          character.id
+        }/comics?apikey=${import.meta.env.VITE_MARVEL_API_KEY}`;
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+
+        const d = await response.json();
+        let c: Character = {
+          id: character.id,
+          imageUrl: character.imageUrl,
+          isFavorite: character.isFavorite,
+          description: character.description,
+          name: character.name,
+          comic: [],
+        };
+        c.comic = d.data.results.map((comic: any) => ({
+          id: comic.id,
+          name: comic.title,
+          imageUrl: `${comic.thumbnail.path}.${comic.thumbnail.extension}`,
+          year: comic.dates[0].date?.slice(0, 4),
+        }));
+
+        console.log(c);
+        setData(c);
+      } catch (error) {
+        console.log(error);
+        setError("Failed to fetch data");
+      } finally {
+        setIsLoading(false);
       }
-
-      const data = await response.json();
-      const favoritesIds = loadFavorites();
-
-      const characters = data.data.results.map((character: any) => ({
-        id: character.id,
-        name: character.name,
-        imageUrl: `${character.thumbnail.path}.${character.thumbnail.extension}`,
-        isFavorite: favoritesIds.includes(character.id),
-      }));
-
-      setData(characters);
-    } catch (error) {
-      console.log(error);
-      setError("Failed to fetch data");
-    } finally {
-      setIsLoading(false);
     }
   };
 
-  useLayoutEffect(() => {
-    if (id) fetchData();
+  useEffect(() => {
+    console.log(character);
+    if (character?.id && data == null) {
+      fetchData();
+    }
   }, []);
 
-  // Función para alternar el estado de favorito de un personaje
-  const toggleFavorite = (id: number) => {
-    const updatedData = data.map((character) =>
-      character.id === id
-        ? { ...character, isFavorite: !character.isFavorite }
-        : character
-    );
+  const toggleFavorite = () => {
+    if (data) {
+      data.isFavorite = !data?.isFavorite;
 
-    setData(updatedData);
-    saveFavorites(
-      updatedData
-        .filter((character) => character.isFavorite)
-        .map((character) => character.id)
-    );
+      setData(data);
+      saveFavorites(data.id);
+    }
   };
-
-  // Calcula el total de favoritos usando useMemo
-  const totalFavorites = useMemo(() => {
-    return data.filter((character) => character.isFavorite).length;
-  }, [data]);
 
   return {
     data,
@@ -96,7 +109,5 @@ export const useMarvelData = ({
     error,
     totalFavorites,
     toggleFavorite,
-    onlyFavorites,
-    setOnlyFavorites,
   };
 };

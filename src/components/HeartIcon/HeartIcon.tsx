@@ -5,16 +5,15 @@ interface HeartIconProps {
   isFavorite?: boolean;
   onClick?: MouseEventHandler<HTMLImageElement>;
 }
-// Asumiendo que tenemos dos versiones del ícono: una para desarrollo y otra minificada para producción
 const heartIconPath =
   process.env.NODE_ENV === "production"
-    ? "/images/HeartIcon.svg" // Ruta al SVG minificado para producción
-    : "/images/HeartIcon.svg"; // Ruta al SVG para desarrollo
+    ? "/images/HeartIcon.svg"
+    : "/images/HeartIcon.svg";
 
 const heartIconEmptyPath =
   process.env.NODE_ENV === "production"
-    ? "/images/HeartEmptyIcon.svg" // Ruta al SVG minificado para producción
-    : "/images/HeartEmptyIcon.svg"; // Ruta al SVG para desarrollo
+    ? "/images/HeartEmptyIcon.svg"
+    : "/images/HeartEmptyIcon.svg";
 
 const HeartIcon: React.FC<HeartIconProps> = ({
   isFavorite = true,

@@ -17,8 +17,6 @@ const Home: React.FC = () => {
   const { searchValue, handleChange } = useSearchBar();
   const {
     data,
-    isLoading,
-    error,
     totalFavorites,
     toggleFavorite,
     onlyFavorites,
@@ -26,7 +24,6 @@ const Home: React.FC = () => {
   } = useMarvelData();
 
   useEffect(() => {
-    console.log(location);
     if (location?.state?.onlyFavorites != undefined)
       setOnlyFavorites(location?.state?.onlyFavorites);
   }, [location]);
@@ -40,8 +37,6 @@ const Home: React.FC = () => {
     );
   }, [data, searchValue, onlyFavorites]);
 
-  if (isLoading) return <p>Cargando...</p>;
-  if (error) return <p>Hubo un error al obtener los datos: {error}</p>;
   return (
     <FullHeightContainer>
       <Header
@@ -62,10 +57,20 @@ const Home: React.FC = () => {
       <SearchResultsCount>{filteredData?.length} RESULTS</SearchResultsCount>
 
       <CardsContainer>
-        {filteredData.map((item: Character) => (
+        {filteredData.map((character: Character) => (
           <MarvelCard
-            character={item}
-            onToggleFavorite={() => toggleFavorite(item.id)}
+            character={character}
+            onToggleFavorite={(e: any) => {
+              e.stopPropagation();
+              toggleFavorite(character.id);
+            }}
+            goToDetails={() =>
+              navigate("/details", {
+                state: {
+                  character,
+                },
+              })
+            }
           />
         ))}
       </CardsContainer>
@@ -100,10 +105,10 @@ const SearchResultsCount = styled.div`
 
 const CardsContainer = styled.div`
   display: flex;
-  flex-wrap: wrap; // Esto permite que los items se pasen a la siguiente fila si no hay espacio
-  justify-content: center; // Centra los items horizontalmente
-  gap: 20px; // Espacio entre los items
-  padding: 20px; // Espaciado alrededor de todo el contenedor
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
 `;
 
 export default Home;
