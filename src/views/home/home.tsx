@@ -1,19 +1,19 @@
 import React from "react";
 import Header from "../../components/Header/Header"; // Asegúrate de ajustar la ruta de importación según sea necesario
+import styled from "styled-components";
 
-// Este es un ejemplo de cómo podrías estructurar tu página Home
 const Home: React.FC = () => {
   return (
-    <div>
+    <FullHeightContainer>
       <Header favoritesCount={5} />
-      {/* Ajusta el conteo de favoritos según sea necesario */}
-      {/* Aquí puedes agregar más contenido a tu página Home */}
-      <main>
-        <h1>Bienvenido a la página de inicio</h1>
-        {/* Agrega más contenido aquí como secciones, imágenes, etc. */}
-      </main>
-    </div>
+      {/* Contenido de la página Home */}
+    </FullHeightContainer>
   );
 };
+
+const FullHeightContainer = styled.div`
+  height: 100vh;
+  flex-direction: column;
+`;
 
 export default Home;
