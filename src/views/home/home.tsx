@@ -8,7 +8,8 @@ import MarvelCard from "../../components/MarvelCard/MarvelCard";
 import { Character } from "../../interfaces";
 const Home: React.FC = () => {
   const { searchValue, handleChange } = useSearchBar();
-  const { data, isLoading, error, toggleFavorite } = useMarvelData();
+  const { data, isLoading, error, totalFavorites, toggleFavorite } =
+    useMarvelData();
 
   const searchResultsCount = 10;
   const filteredData = useMemo(() => {
@@ -20,13 +21,13 @@ const Home: React.FC = () => {
   if (error) return <p>Hubo un error al obtener los datos: {error}</p>;
   return (
     <FullHeightContainer>
-      <Header favoritesCount={5} />
+      <Header favoritesCount={totalFavorites} />
       <SearchBar
         placeHolder="SEARCH A CHARACTER"
         value={searchValue}
         onChange={handleChange}
       />
-      <SearchResultsCount>{searchResultsCount} RESULTS</SearchResultsCount>
+      <SearchResultsCount>{filteredData?.length} RESULTS</SearchResultsCount>
 
       <CardsContainer>
         {filteredData.map((item: Character) => (
