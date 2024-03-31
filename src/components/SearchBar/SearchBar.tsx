@@ -27,13 +27,12 @@ const SearchBar: React.FC<HeaderProps> = ({
 };
 
 const SearchBarContainer = styled.div`
-  margin-top: 30px;
   box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
   border-bottom: 1px solid #ccc;
-  margin: 50px 30px 0px 30px;
+  margin: 30px 30px 0px 30px;
 `;
 
 const SearchInput = styled.input`

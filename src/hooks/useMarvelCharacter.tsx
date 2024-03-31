@@ -1,8 +1,8 @@
 import { useState, useLayoutEffect, useMemo } from "react";
 import { Character } from "../interfaces/index";
 
-interface UseMarvelDataState {
-  data: Character[];
+interface UseMarvelCharacter {
+  data: Character;
   isLoading: boolean;
   error: string | null;
   totalFavorites: number;
@@ -11,11 +11,17 @@ interface UseMarvelDataState {
   setOnlyFavorites: (visibility: boolean) => void;
 }
 
-export const useMarvelData = (): UseMarvelDataState => {
-  const [data, setData] = useState<Character[]>([]);
+interface UserMarvelCharacterProps {
+  id: number;
+  name:
+}
+
+export const useMarvelData = ({
+  id,
+}: UserMarvelCharacterProps): UseMarvelCharacter => {
+  const [data, setData] = useState<Character | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [onlyFavorites, setOnlyFavorites] = useState<boolean>(false);
   // Función para cargar los favoritos desde localStorage
   const loadFavorites = (): number[] => {
     const favorites = localStorage.getItem("marvel_favorites");
@@ -32,7 +38,7 @@ export const useMarvelData = (): UseMarvelDataState => {
     setError(null);
 
     try {
-      const url = `http://gateway.marvel.com/v1/public/characters?apikey=${
+      const url = `http://gateway.marvel.com/v1/public/characters/${id}/comics?apikey=${
         import.meta.env.VITE_MARVEL_API_KEY
       }`;
       const response = await fetch(url);
@@ -60,7 +66,7 @@ export const useMarvelData = (): UseMarvelDataState => {
   };
 
   useLayoutEffect(() => {
-    fetchData();
+    if (id) fetchData();
   }, []);
 
   // Función para alternar el estado de favorito de un personaje

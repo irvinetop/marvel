@@ -1,20 +1,10 @@
 import React from "react";
-import styled, { keyframes } from "styled-components";
+import styled from "styled-components";
 import FavoriteIcon from "../HeartIcon/HeartIcon"; // Asegúrate de ajustar la ruta de importación según sea necesario
 import { Character } from "../../interfaces";
-
-const changeBackground = keyframes`
-  from {
-    background-size: 100% 0%;
-  }
-  to {
-    background-size: 100% 100%;
-  }
-`;
-
 interface MarvelCardProps {
   character?: Character;
-  onToggleFavorite: () => void; // Función para manejar el cambio de estado favorito
+  onToggleFavorite: () => void;
 }
 
 const MarvelCard: React.FC<MarvelCardProps> = ({
@@ -64,7 +54,12 @@ const CardContent = styled.div`
 `;
 
 const Name = styled.div`
-  font-size: 16px;
+  font-family: Roboto Condensed;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 16.41px;
+  text-align: left;
+
   color: #fff;
 `;
 
